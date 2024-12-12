@@ -7,7 +7,7 @@ module encoder_512_to_9_reg(
     always @(*) begin
         for (i = 0; i < 512; i = i + 1) begin
             if (in[i]) begin
-                out <= i[8:0];
+                out = i[8:0];
             end
         end
     end
