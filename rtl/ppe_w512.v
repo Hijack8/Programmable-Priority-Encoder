@@ -1,58 +1,58 @@
-module ppe_w512 (
-    input              [ 511: 0]        Req                        ,
-    input              [   8: 0]        P_enc                      ,
-    output             [   8: 0]        o_value                    ,
+module ppe_w1024 (
+    input              [1023: 0]        Req                        ,// 请求信号，位宽为1024
+    input              [   9: 0]        P_enc                      ,// 编码器输入，位宽为10
+    output             [   9: 0]        o_value                    ,// 编码器输出，位宽为10
     output                              valid                       // 输出valid信号
 );
 
-    wire               [ 511: 0]        P_thermo                   ;
-    wire               [ 511: 0]        Gnt_smpl_pe                ;
-    wire               [ 511: 0]        Gnt_smpl_pe_thermo         ;
-    wire               [   1: 0]        anyGnt_smpl_pe_thermo      ;
-    wire               [   1: 0]        anyGnt_smpl_pe             ;
-    reg                [ 511: 0]        Gnt                        ;
+    wire               [1023: 0]        P_thermo                   ;// 热码信号，位宽为1024
+    wire               [1023: 0]        Gnt_smpl_pe                ;// 授权信号，位宽为1024
+    wire               [1023: 0]        Gnt_smpl_pe_thermo         ;// 热码授权信号，位宽为1024
+    wire               [   1: 0]        anyGnt_smpl_pe_thermo      ;// 热码授权有效信号
+    wire               [   1: 0]        anyGnt_smpl_pe             ;// 授权有效信号
+    reg                [1023: 0]        Gnt                        ;// 最终授权信号，位宽为1024
 
-
-    // 调整 thermometer_w1024 为支持 512 位的 thermometer_w512
-    thermometer_w512 u_thermometer (
+    // 实例化支持1024位的热码模块
+    thermometer_w1024 u_thermometer (
     .enc                                (P_enc                     ),
     .thermo                             (P_thermo                  ) 
     );
 
-    // 修改为 smpl_pe_w256
-    smpl_pe_w256 u0_smpl_pe_thermo_w256 (
-    .Req                                ((~P_thermo[255:0]) & Req[255:0]),
-    .Gnt                                (Gnt_smpl_pe_thermo[255:0] ),
+    // 实例化四个采样授权模块，每个模块处理512位
+    smpl_pe_w512 u0_smpl_pe_thermo_w512 (
+    .Req                                ((~P_thermo[ 511:   0]) & Req[ 511:   0]),
+    .Gnt                                (Gnt_smpl_pe_thermo[ 511:   0]),
     .valid                              (anyGnt_smpl_pe_thermo[0]  ) 
     );
 
-    smpl_pe_w256 u0_smpl_pe_w256 (
-    .Req                                (Req[255:0]                ),
-    .Gnt                                (Gnt_smpl_pe[255:0]        ),
+    smpl_pe_w512 u0_smpl_pe_w512 (
+    .Req                                (Req[ 511:   0]            ),
+    .Gnt                                (Gnt_smpl_pe[ 511:   0]    ),
     .valid                              (anyGnt_smpl_pe[0]         ) 
     );
 
-    smpl_pe_w256 u1_smpl_pe_thermo_w256 (
-    .Req                                ((~P_thermo[511:256]) & Req[511:256]),
-    .Gnt                                (Gnt_smpl_pe_thermo[511:256]),
+    smpl_pe_w512 u1_smpl_pe_thermo_w512 (
+    .Req                                ((~P_thermo[1023: 512]) & Req[1023: 512]),
+    .Gnt                                (Gnt_smpl_pe_thermo[1023: 512]),
     .valid                              (anyGnt_smpl_pe_thermo[1]  ) 
     );
 
-    smpl_pe_w256 u1_smpl_pe_w256 (
-    .Req                                (Req[511:256]              ),
-    .Gnt                                (Gnt_smpl_pe[511:256]      ),
+    smpl_pe_w512 u1_smpl_pe_w512 (
+    .Req                                (Req[1023: 512]            ),
+    .Gnt                                (Gnt_smpl_pe[1023: 512]    ),
     .valid                              (anyGnt_smpl_pe[1]         ) 
     );
 
-    // valid信号的逻辑
-    assign                              valid                     = ~((anyGnt_smpl_pe_thermo | anyGnt_smpl_pe) == 2'b0);
+    // 生成valid信号，当任意一个授权有效时，valid为高
+    assign                              valid                     = ~((anyGnt_smpl_pe_thermo | anyGnt_smpl_pe) == 2'b00);
     
-    encoder_512_to_9 u_encoder (
+    // 实例化1024到10位的编码器
+    encoder_1024_to_10 u_encoder (
     .in                                 (Gnt                       ),
-    .out                                (o_value                   )
+    .out                                (o_value                   ) 
     );
 
-    // 选择Gnt的逻辑
+    // 选择最终的Gnt信号逻辑
     always @* begin
         case(anyGnt_smpl_pe_thermo)
             2'b00: begin
@@ -67,7 +67,7 @@ module ppe_w512 (
                         Gnt = Gnt_smpl_pe;
                     end
                     2'b11: begin
-                        Gnt = {256'b0, Gnt_smpl_pe[255:0]};
+                        Gnt = {512'b0, Gnt_smpl_pe[ 511:   0]};
                     end
                 endcase
             end
@@ -80,10 +80,10 @@ module ppe_w512 (
             2'b11: begin
                 case (P_enc[9])
                     1'b0: begin
-                        Gnt = {256'b0, Gnt_smpl_pe_thermo[255:0]};
+                        Gnt = {512'b0, Gnt_smpl_pe_thermo[ 511:   0]};
                     end
                     1'b1: begin
-                        Gnt = {Gnt_smpl_pe_thermo[511:256], 256'b0};
+                        Gnt = {Gnt_smpl_pe_thermo[1023: 512], 512'b0};
                     end
                 endcase
             end
