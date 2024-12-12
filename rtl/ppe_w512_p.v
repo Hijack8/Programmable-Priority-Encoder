@@ -95,7 +95,7 @@ module ppe_w512_p (
                 ) :
                 ((anyGnt_smpl_pe_thermo == 2'b01 || anyGnt_smpl_pe_thermo == 2'b10) ? 
                     Gnt_smpl_pe_thermo :
-                    (P_enc_reg_4_s2[9] ? {Gnt_smpl_pe_thermo[511:256], 256'b0} : {256'b0, Gnt_smpl_pe_thermo[255:0]})
+                    (P_enc_reg_4_s2[8] ? {Gnt_smpl_pe_thermo[511:256], 256'b0} : {256'b0, Gnt_smpl_pe_thermo[255:0]})
                 );
 
     wire [8:0] o_value_wire;

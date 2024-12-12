@@ -78,7 +78,7 @@ module ppe_w512 (
                 Gnt = Gnt_smpl_pe_thermo;
             end
             2'b11: begin
-                case (P_enc[9])
+                case (P_enc[8])
                     1'b0: begin
                         Gnt = {256'b0, Gnt_smpl_pe_thermo[255:0]};
                     end
