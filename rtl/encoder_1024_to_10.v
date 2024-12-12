@@ -7,7 +7,7 @@ module encoder_1024_to_10(
     always @(*) begin
         for (i = 0; i < 1024; i = i + 1) begin
             if (in[i]) begin
-                out <= i[9:0];
+                out = i[9:0];
             end
         end
     end
