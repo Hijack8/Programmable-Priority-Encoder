@@ -1,0 +1,14 @@
+*.ddc
+*.sdc
+
+# report file
+*.rpt
+
+# work directory
+*.log
+*.svf
+
+report/
+mapped/
+work/
+!work/.synopsys_dc.setup
