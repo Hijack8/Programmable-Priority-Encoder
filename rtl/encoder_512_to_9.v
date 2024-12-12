@@ -1,4 +1,3 @@
-`timescale 1ns / 1ps
 module encoder_512_to_9 (
     input       [511:0]    in,   // 512 位输入信号
     output [8:0]            out   // 9 位输出信号

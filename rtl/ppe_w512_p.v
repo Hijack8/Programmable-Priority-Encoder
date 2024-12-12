@@ -99,11 +99,15 @@ module ppe_w512_p (
                 );
 
     wire [8:0] o_value_wire;
-    encoder_512_to_9 u_encoder (
+    // encoder_512_to_9 u_encoder (
+    // .in                                 (Gnt                       ),
+    // .out                                (o_value_wire                   ) 
+    // );
+    encoder_512_to_9_reg u_encoder (
     .in                                 (Gnt                       ),
     .out                                (o_value_wire                   ) 
     );
-    
+
     always @(posedge clk or posedge rst) begin
         if(rst) begin
             o_value_inc <= 9'b0;
