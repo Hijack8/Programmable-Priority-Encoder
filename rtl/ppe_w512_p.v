@@ -2,7 +2,7 @@ module ppe_w512_p (
     input                               clk                        ,
     input                               rst                        ,
     input              [ 511: 0]        Req                        ,
-    input              [   8: 0]        P_enc                      ,
+    // input              [   8: 0]        P_enc                      ,
     output    reg         [   8: 0]     o_value                    ,
     output    reg         [   8: 0]     o_value_inc                ,
     output    reg                       valid                       
@@ -63,25 +63,25 @@ module ppe_w512_p (
                           
 
     // 修改为 smpl_pe_w256
-    smpl_pe_w256 u0_smpl_pe_thermo_w256 (
+    smpl_pe_w256_1 u0_smpl_pe_thermo_w256 (
     .Req                                ((~P_thermo_reg[255:0]) & Req_reg_4_s2[255:0]),
     .Gnt                                (Gnt_smpl_pe_thermo[255:0] ),
     .valid                              (anyGnt_smpl_pe_thermo[0]  ) 
     );
 
-    smpl_pe_w256 u0_smpl_pe_w256 (
+    smpl_pe_w256_1 u0_smpl_pe_w256 (
     .Req                                (Req_reg_4_s2[255:0]            ),
     .Gnt                                (Gnt_smpl_pe[255:0]        ),
     .valid                              (anyGnt_smpl_pe[0]         ) 
     );
 
-    smpl_pe_w256 u1_smpl_pe_thermo_w256 (
+    smpl_pe_w256_1 u1_smpl_pe_thermo_w256 (
     .Req                                ((~P_thermo_reg[511:256]) & Req_reg_4_s2[511:256]),
     .Gnt                                (Gnt_smpl_pe_thermo[511:256]),
     .valid                              (anyGnt_smpl_pe_thermo[1]  ) 
     );
 
-    smpl_pe_w256 u1_smpl_pe_w256 (
+    smpl_pe_w256_1 u1_smpl_pe_w256 (
     .Req                                (Req_reg_4_s2[511:256]          ),
     .Gnt                                (Gnt_smpl_pe[511:256]      ),
     .valid                              (anyGnt_smpl_pe[1]         ) 
@@ -103,17 +103,27 @@ module ppe_w512_p (
     // .in                                 (Gnt                       ),
     // .out                                (o_value_wire                   ) 
     // );
-    encoder_512_to_9_reg u_encoder (
-    .in                                 (Gnt                       ),
-    .out                                (o_value_wire                   ) 
+    //
+    reg [511:0] Gnt_reg;
+    encoder_512_to_9 u_encoder (
+    .in                                 (Gnt_reg << 1 | Gnt_reg >> 511),
+    .out                                (o_value_wire) 
     );
+
+    always @(posedge clk or posedge rst) begin 
+        if (rst) begin 
+            Gnt_reg <= 0;
+        end else begin 
+            Gnt_reg <= Gnt;
+        end
+    end
 
     always @(posedge clk or posedge rst) begin
         if(rst) begin
             o_value_inc <= 9'b0;
             o_value <= 9'b0;
         end else begin
-            o_value_inc <= o_value_wire+1;
+            o_value_inc <= o_value_wire;
             o_value <= o_value_wire;
         end
     end

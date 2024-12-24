@@ -7,6 +7,7 @@ source "$SCRIPT_PATH/common_functions.tcl"
 stage_message 6 "Starting synthesis" 1
 
 # Compile the design with high effort
-compile -map_effort high -area_effort high
+# compile -map_effort high -area_effort high
+compile_ultra
 
 stage_message 6 "Synthesis completed" 0
