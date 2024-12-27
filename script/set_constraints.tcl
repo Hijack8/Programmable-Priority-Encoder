@@ -7,7 +7,7 @@ source "$SCRIPT_PATH/common_functions.tcl"
 stage_message 5 "Setting timing and area constraints" 1
 
 # Create clock constraint
-create_clock -period 0.7 -name clk [get_ports clk]
+create_clock -period 0.2 -name clk [get_ports clk]
 
 # Set delays for RAM modules
 set_blackbox_delays "dpsram_*" 2 1
