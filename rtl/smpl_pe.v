@@ -1,3 +1,4 @@
+`timescale 1ns / 1ps
 module smpl_pe #(
   parameter WIDTH = 512
 )(

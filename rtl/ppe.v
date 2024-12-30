@@ -1,3 +1,4 @@
+`timescale 1ns / 1ps
 module ppe #(
   parameter PPE_WIDTH = 1024,
   parameter PPE_LOG_W = 10

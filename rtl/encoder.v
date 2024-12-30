@@ -1,3 +1,4 @@
+`timescale 1ns / 1ps
 module encoder #(
   parameter WIDTH = 1024,
   parameter LOG_W = 10
