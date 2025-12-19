@@ -18,7 +18,7 @@ set REPORT_PATH     [getenv "REPORT_PATH"]
 set UNMAPPED_PATH   [getenv "UNMAPPED_PATH"]
 set LIB_PATH        [getenv "LIB_PATH"]
 set TOP_MODULE      [getenv "TOP_MODULE"]
-set_host_options -max_cores 6
+set_host_options -max_cores 4
 
 # Output variable values for verification
 puts "SYN_ROOT_PATH: $SYN_ROOT_PATH"

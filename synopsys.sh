@@ -16,6 +16,8 @@ function setup_env() {
     fi
   done
 
+  echo $DC_PATH
+
   if [ -n "$2" ] && [ $flag_DC_PATH -eq 0 ]; then
     export DC_PATH="$2"
   elif [ $flag_DC_PATH -eq 0 ]; then
@@ -74,8 +76,10 @@ function run_script() {
   fi
 
   # Run the Design Compiler script without echoing commands
-  export PPE_C_WIDTH=$2
-  export PPE_C_LOG_W=$3
+  export PPE_H_WIDTH=$2
+  export PPE_H_LOG_W=$3
+  export PPE_H_WIDTH_T=$4
+  export PPE_H_LOG_W_T=$5
   dc_shell -f "$SCRIPT_PATH/main.tcl" >"$SYN_ROOT_PATH/execute.log" 2>&1
 
   echo "--------------------- END Synopsys ---------------------"
